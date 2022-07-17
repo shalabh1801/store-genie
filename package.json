@@ -7,6 +7,9 @@
     "email": "shalabh1801@gmail.com"
   },
   "dependencies": {
+    "@shopify/app-bridge": "^3.1.2",
+    "@shopify/app-bridge-react": "^3.1.2",
+    "@shopify/polaris": "^9.20.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
