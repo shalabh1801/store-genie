@@ -2,6 +2,10 @@
   "name": "store-genie-ui",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "name": "Shalabh Srivastava",
+    "email": "shalabh1801@gmail.com"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
