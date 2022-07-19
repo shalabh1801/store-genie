@@ -5,8 +5,8 @@ import logo from './logo.svg';
 
 function App() {
   const config: AppConfigV2 = {
-    apiKey: '',
-    host: ''
+    apiKey: 'eb1433ba699ed6af00879531394dc2f3',
+    host: (new URLSearchParams(window.location.search)).get('host') || '',
   };
 
   return (
