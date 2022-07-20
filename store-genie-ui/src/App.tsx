@@ -1,33 +1,20 @@
-import { AppConfigV2 } from '@shopify/app-bridge';
-import { Provider } from '@shopify/app-bridge-react';
-import './App.css';
-import logo from './logo.svg';
+import { Navigate } from 'react-router';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import MainApp from './app/components/MainApp';
+import Auth from './auth/components/Auth';
+import { AuthProvider } from './common/contexts/AuthContext';
 
 function App() {
-  const config: AppConfigV2 = {
-    apiKey: 'eb1433ba699ed6af00879531394dc2f3',
-    host: (new URLSearchParams(window.location.search)).get('host') || '',
-  };
-
   return (
-    <Provider config={config}>
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.tsx</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    </Provider>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<Navigate to='/auth' />}></Route>
+          <Route path='/auth/*' element={<Auth />}></Route>
+          <Route path='/app/*' element={<MainApp />}></Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
