@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const app = express();
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://0d10-122-161-84-115.ngrok.io']
+  origin: ['http://localhost:3000', 'https://35e5-122-161-84-115.ngrok.io']
 }));
 app.use(express.json());
 
@@ -20,7 +20,8 @@ Shopify.Context.initialize({
   HOST_NAME: HOST.replace(/https?:\/\//, ""),
   HOST_SCHEME,
   IS_EMBEDDED_APP: true,
-  API_VERSION: ApiVersion.July22
+  API_VERSION: ApiVersion.July22,
+  SESSION_STORAGE: new Shopify.Session.MemorySessionStorage()
 });
 // Storing the currently active shops in memory will force them to re-login when your server restarts. You should
 // persist this object in your app.
@@ -36,7 +37,7 @@ app.get("/", async (req: express.Request, res: express.Response) => {
       req,
       res,
       shop,
-      '/callback',
+      '/auth/callback',
       false,
     );
 
