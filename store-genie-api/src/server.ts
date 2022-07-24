@@ -21,7 +21,6 @@ Shopify.Context.initialize({
   HOST_SCHEME,
   IS_EMBEDDED_APP: true,
   API_VERSION: ApiVersion.July22,
-  SESSION_STORAGE: new Shopify.Session.MemorySessionStorage()
 });
 // Storing the currently active shops in memory will force them to re-login when your server restarts. You should
 // persist this object in your app.
@@ -42,7 +41,6 @@ app.get("/", async (req: express.Request, res: express.Response) => {
     );
 
     // not logged in, redirect to login
-    // new line
     res.status(200).send({
       apiKey: API_KEY,
       permissionUrl: authRoute,
