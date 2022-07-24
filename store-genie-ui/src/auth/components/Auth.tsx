@@ -3,7 +3,6 @@ import { useContext } from "react";
 import { Route, Routes } from "react-router";
 import { Navigate } from "react-router-dom";
 import { AuthContext } from "../../common/contexts/AuthContext";
-import Callback from "./Callback";
 import Consent from "./Consent";
 
 export interface AuthProps {
@@ -22,7 +21,6 @@ export default function Auth() {
   return (
     <Routes>
       <Route path="/" element={<Consent />}></Route>
-      <Route path="/callback" element={<Callback />}></Route>
     </Routes>
   );
 }

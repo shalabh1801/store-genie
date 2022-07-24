@@ -1,15 +1,16 @@
-import express from 'express';
-import Shopify, { ApiVersion, AuthQuery } from '@shopify/shopify-api';
+import Shopify, { ApiVersion } from '@shopify/shopify-api';
+import axios from 'axios';
 import cors from 'cors';
+import express from 'express';
 require('dotenv').config();
 
 const app = express();
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://35e5-122-161-84-115.ngrok.io']
+  origin: ['http://localhost:3000', 'https://b330-2401-4900-1c67-8ad5-c883-6c13-3240-7a4a.ngrok.io']
 }));
 app.use(express.json());
 
-const { API_KEY, API_SECRET_KEY, SCOPES, SHOP, HOST, HOST_SCHEME, PORT } = process.env;
+const { API_KEY, API_SECRET_KEY, SCOPES, HOST, HOST_SCHEME, PORT } = process.env;
 
 const serverPort = PORT || 3000;
 
@@ -29,14 +30,14 @@ const ACTIVE_SHOPIFY_SHOPS: { [key: string]: { scope: string, token: string} | u
 // the rest of the example code goes here
 
 app.get("/", async (req: express.Request, res: express.Response) => {
-  const shop: string = req.query.shop.toLocaleString() || '';
+  const shop: string = req.query.shop?.toLocaleString() || '';
   // This shop hasn't been seen yet, go through OAuth to create a session
   if (ACTIVE_SHOPIFY_SHOPS[shop] === undefined) {
     let authRoute = await Shopify.Auth.beginAuth(
       req,
       res,
       shop,
-      '/auth/callback',
+      '/callback',
       false,
     );
 
@@ -59,14 +60,26 @@ app.get("/", async (req: express.Request, res: express.Response) => {
 
 app.get("/callback", async (req: express.Request, res: express.Response) => {
   try {
-    const session = await Shopify.Auth.validateAuthCallback(
-      req,
-      res,
-      req.query as unknown as AuthQuery,
-    ); // req.query must be cast to unkown and then AuthQuery in order to be accepted
-    ACTIVE_SHOPIFY_SHOPS[SHOP] = {
-      scope: session.scope,
-      token: session.accessToken
+    // const session = await Shopify.Auth.validateAuthCallback(
+    //   req,
+    //   res,
+    //   req.query as unknown as AuthQuery,
+    // ); // req.query must be cast to unkown and then AuthQuery in order to be accepted
+    const shop: string = req.query.shop.toLocaleString();
+    const code: string = req.query.code.toLocaleString();
+
+    const session = await axios.post<{
+      scope: string,
+      access_token: string
+    }>(`https://${shop}/admin/oauth/access_token`, {
+      client_id: API_KEY,
+      client_secret: API_SECRET_KEY,
+      code: code
+    })
+
+    ACTIVE_SHOPIFY_SHOPS[shop] = {
+      scope: session.data.scope,
+      token: session.data.access_token
     };
   } catch (error) {
     console.log('REDIRECT toh hua tha :/');

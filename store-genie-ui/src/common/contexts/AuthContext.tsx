@@ -2,6 +2,7 @@ import { AppConfigV2 } from "@shopify/app-bridge";
 import { AxiosError, AxiosResponse } from "axios";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import Loading from "../components/Loading/Loading";
+import { IAuthModel } from "../models/AuthModel";
 import AuthService from "../services/auth.service";
 
 export interface AuthContextProps {
@@ -34,7 +35,7 @@ const AuthProvider = ({ children }: { children?: ReactNode }) => {
     const authService = new AuthService();
     authService
       .getShopifyAuthDetails(window.location.search)
-      .then((response: AxiosResponse) => {
+      .then((response: AxiosResponse<IAuthModel>) => {
         console.log('RESPONSE: ', response);
 
         setConfig({
@@ -43,7 +44,7 @@ const AuthProvider = ({ children }: { children?: ReactNode }) => {
         });
 
         setPermissionUrl(response.data.permissionUrl);
-        setIsAppInstalled(response.data.isAppInstalled);
+        setIsAppInstalled(response.data.isShopInstalled);
         setIsLoading(false);
       }, (error: AxiosError) => {
         console.log('ERROR: ', error);
