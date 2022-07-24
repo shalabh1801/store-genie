@@ -42,6 +42,7 @@ app.get("/", async (req: express.Request, res: express.Response) => {
     );
 
     // not logged in, redirect to login
+    // new line
     res.status(200).send({
       apiKey: API_KEY,
       permissionUrl: authRoute,
