@@ -1,4 +1,4 @@
-import Shopify, { ApiVersion } from '@shopify/shopify-api';
+import Shopify, { ApiVersion, DeliveryMethod } from '@shopify/shopify-api';
 import axios from 'axios';
 import cors from 'cors';
 import express from 'express';
@@ -25,14 +25,15 @@ Shopify.Context.initialize({
 });
 // Storing the currently active shops in memory will force them to re-login when your server restarts. You should
 // persist this object in your app.
-const ACTIVE_SHOPIFY_SHOPS: { [key: string]: { scope: string, token: string} | undefined } = {};
+const ACTIVE_SHOPIFY_SHOPS: { [key: string]: { scope: string[], token: string} | undefined } = {};
 
 // the rest of the example code goes here
 
 app.get("/", async (req: express.Request, res: express.Response) => {
   const shop: string = req.query.shop?.toLocaleString() || '';
+  const scopesChanged = SCOPES.split(',').some(scope => ACTIVE_SHOPIFY_SHOPS[shop]?.scope.indexOf(scope) === -1);
   // This shop hasn't been seen yet, go through OAuth to create a session
-  if (ACTIVE_SHOPIFY_SHOPS[shop] === undefined) {
+  if (ACTIVE_SHOPIFY_SHOPS[shop] === undefined || scopesChanged) {
     let authRoute = await Shopify.Auth.beginAuth(
       req,
       res,
@@ -60,11 +61,6 @@ app.get("/", async (req: express.Request, res: express.Response) => {
 
 app.get("/callback", async (req: express.Request, res: express.Response) => {
   try {
-    // const session = await Shopify.Auth.validateAuthCallback(
-    //   req,
-    //   res,
-    //   req.query as unknown as AuthQuery,
-    // ); // req.query must be cast to unkown and then AuthQuery in order to be accepted
     const shop: string = req.query.shop.toLocaleString();
     const code: string = req.query.code.toLocaleString();
 
@@ -78,7 +74,7 @@ app.get("/callback", async (req: express.Request, res: express.Response) => {
     })
 
     ACTIVE_SHOPIFY_SHOPS[shop] = {
-      scope: session.data.scope,
+      scope: session.data.scope.split(','),
       token: session.data.access_token
     };
   } catch (error) {

@@ -6,7 +6,3 @@ export interface IAuthModel {
   host: string,
   isShopInstalled: boolean
 }
-
-export interface IAuthCallbackModel {
-  appUrl: string;
-}
